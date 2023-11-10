@@ -1,0 +1,23 @@
+Sub CATMain()
+
+Set partDocument1 = CATIA.ActiveDocument
+Set part1 = partDocument1.Part
+Set parameters1 = part1.Parameters
+Set partDocument1 = CATIA.ActiveDocument
+
+Set product1 = partDocument1.GetItem("")
+
+On Error Resume Next
+Err.Clear
+if Err.Number = 0 then
+    'Nothing TODO if Parameter Exists
+else
+    'TODO Stuff if paramete dose not Exist
+    Set parameters1 = part1.Parameters
+    Set strParam1 = parameters1.CreateString("", "")
+    strParam1.Rename "Search_string"
+    part1.Update
+    strParam1.Value = "_"
+ end if
+
+End Sub
