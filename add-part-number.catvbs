@@ -3,7 +3,7 @@ Sub CATMain()
 Set partDocument1 = CATIA.ActiveDocument
 Set part1 = partDocument1.Part
 Set parameters1 = part1.Parameters
-
+Set partDocument1 = CATIA.ActiveDocument
 
 Set product1 = partDocument1.GetItem("")
 
@@ -30,12 +30,11 @@ if Err.Number = 0 then
 else
 Set intParam1 = parameters2.CreateInteger("",0)
 intParam1.Rename "Search_result"
- Set relations1 = part1.Relations
+Set relations1 = part1.Relations
 Set product1 = partDocument1.product
 Set formula1 = relations1.CreateFormula("Formula.1", "", intParam1, "`" & product1.PartNumber & "\Part Number` .Search(Search_string)")
 formula1.Rename = "Formula.1"
 end if
-
 
 Set parameters3 = part1.Parameters
 On Error Resume Next
@@ -54,22 +53,32 @@ Set formula2 = relations2.CreateFormula("Formula.2", "", strParam2, formulaStr)
 part1.Update
 end if
 
-Set parameters1 = part1.Parameter
+
 On Error Resume Next
 Err.Clear
-Set strParam3 = parameters1.Item("Code")
+Set strParam3 = parameters3.Item("Code")
 if strParam3.value = "MF" then
-    'TODO if parameter Exists
     product1.Revision = 1
     product1.Definition = parameters1.Item("Code").value
     product1.DescriptionRef = "Milling Fixture"
+end if
+if  strParam3.value = "CL" then
+    product1.Revision = 1
+    product1.Definition = parameters1.Item("Code").value
+    product1.DescriptionRef = "Clamp"
+end if
+
+On Error Resume Next
+Err.Clear
+Set strParam4 = product1.UserRefProperties.Item("Material_")
+if Err.Number = 0 then
+    strParam4.ValuateFromString "AL6061-T651"
 else
-     'TODO Stuff if parameter dose not Exist
-     Set parameters3 = product1.UserRefProperties
-     Set partNumber = product1.PartNumber
-     Set strParam11 = parameters11.CreateString("Part_Number", partNumber)
-     product1.Definition = parameters1.Item("Code").value
-     strParam11.Value = product1.Definition
+    Set parameters3 = product1.UserRefProperties
+    Set strParam3 = parameters3.CreateString("Material_", "")
+    Set strParam4 = parameters3.CreateString("Stock_Size", "")
+    strParam3.value = "AL6061-T651"
+    strParam4.ValuateFromString ""
 end if
 
 End Sub

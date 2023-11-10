@@ -18,7 +18,7 @@ else
     Set strParam1 = parameters1.CreateString("", "")
     strParam1.Rename "Search_string"
     part1.Update
-    strParam1.Value = "_"
+    strParam1.Value = "-"
  end if
 
 Set parameters2 = part1.Parameters
@@ -44,7 +44,7 @@ if Err.Number = 0 then
     'Nothing
 else
 Set strParam2 = parameters3.CreateString("","")
-strParam2.Rename = "Code"
+strParam2.Rename "Code"
 part1.Update
 Set product2 = partDocument1.product
 Set relations2 = part1.Relations
@@ -53,22 +53,32 @@ Set formula2 = relations2.CreateFormula("Formula.2", "", strParam2, formulaStr)
 part1.Update
 end if
 
-Set parameters1 = part1.Parameter
+
 On Error Resume Next
 Err.Clear
-Set strParam3 = parameters1.Item("Code")
+Set strParam3 = parameters3.Item("Code")
 if strParam3.value = "MF" then
-    'TODO if parameter Exists
     product1.Revision = 1
     product1.Definition = parameters1.Item("Code").value
     product1.DescriptionRef = "Milling Fixture"
+end if
+if  strParam3.value = "CL" then
+    product1.Revision = 1
+    product1.Definition = parameters1.Item("Code").value
+    product1.DescriptionRef = "Clamp"
+end if
+
+On Error Resume Next
+Err.Clear
+Set strParam4 = product1.UserRefProperties.Item("Material_")
+if Err.Number = 0 then
+    strParam4.ValuateFromString "AL6061-T651"
 else
-     'TODO Stuff if parameter dose not Exist
-     Set parameters3 = product1.UserRefProperties
-     Set partNumber = product1.PartNumber
-     Set strParam11 = parameters11.CreateString("Part_Number", partNumber)
-     product1.Definition = parameters1.Item("Code").value
-     strParam11.Value = product1.Definition
+    Set parameters3 = product1.UserRefProperties
+    Set strParam3 = parameters3.CreateString("Material_", "")
+    Set strParam4 = parameters3.CreateString("Stock_Size", "")
+    strParam3.value = "AL6061-T651"
+    strParam4.ValuateFromString ""
 end if
 
 End Sub
